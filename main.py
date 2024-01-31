@@ -8,7 +8,7 @@ from serclient import *
 import asyncio
 
 LANGUAGE = "rus"
-
+# arcade.load_animated_gif()
 music = arcade.play_sound(arcade.load_sound("env/music/bgmusic.mp3"), looping=True, volume=0.4)
 with open("env/data/user.txt", "r", encoding="utf-8") as file:
     for line in file:
@@ -23,7 +23,6 @@ def resultata():
 
 
 # music.volume=0
-
 class StartView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -346,6 +345,29 @@ class GeneralView(arcade.View):
         for i in range(1, 61):
             self.bg.append(arcade.load_texture(f"env/parallax/mainbg/full with noise{i}.jpg"))
         self.i = i
+
+        self.base = False
+
+        with open("env/data/user.txt", "r", encoding="utf-8") as file:
+            for line in file:
+                if line.strip() == "None":
+                    self.manager = arcade.gui.UIManager()
+                    self.manager.enable()
+                    self.l = True
+                    animals = ["kenguru", "jiraf", "pingvin", "lev"]
+                    self.textq = arcade.gui.UIInputText(window.width / 2 + 380 / 1980 * window.width + 3,
+                                                        window.height / 4.45 - 85,
+                                                        width=window.width / 4 - 50, height=140,
+                                                        font_name="Yukarimobile",
+                                                        text_color=(245, 148, 24),
+                                                        font_size=50,
+                                                        text=f"{animals[random.randint(0, len(animals) - 1)]}"
+                                                             f"{random.randint(0, 100)}")
+                    self.manager.add(self.textq)
+                else:
+                    self.nick = line.strip()
+                    self.l = False
+
         self.start = time.time()
 
     def on_draw(self):
@@ -381,18 +403,32 @@ class GeneralView(arcade.View):
         arcade.draw_text("username", window.width / 6, window.height / 4.6, anchor_x="center",
                          color=arcade.color.WHITE, font_name="Yukarimobile", font_size=80 / 1980 * window.width)
 
-        arcade.draw_lrwh_rectangle_textured(window.width / 2 + window.width / 6,
-                                            window.height / 4.6 - 20 / 1080 * window.height,
-                                            self.entry.width * 0.4 / 1980 * window.width,
-                                            self.entry.height * 0.4 / 1080 * window.height, self.entry)
+        if self.l:
+            arcade.draw_lrwh_rectangle_textured(window.width / 2 + window.width / 6,
+                                                window.height / 4.6 - 20 / 1080 * window.height,
+                                                self.entry.width * 0.45 / 1980 * window.width,
+                                                self.entry.height * 0.45 / 1080 * window.height, self.entry)
+            self.manager.draw()
+            arcade.draw_texture_rectangle(window.width / 2, window.height / 10, self.login.width * 0.2,
+                                          self.login.height * 0.2,
+                                          self.login)
+            if len(str(self.textq.text)) <= 11:
+                arcade.draw_text(str(self.textq.text), window.width / 2 + 380 / 1980 * window.width,
+                                 window.height / 4.45, anchor_x="left",
+                                 color=arcade.color.WHITE, font_name="Yukarimobile", font_size=50 / 1980 * window.width,
+                                 width=window.width / 4)
+            else:
+                arcade.draw_text("so long", window.width / 6, window.height / 10 - 30, color=arcade.color.RED,
+                                 font_name="Yukarimobile", anchor_x="center", font_size=80 / 1980 * window.width)
+        else:
+            arcade.draw_text(self.nick, window.width / 2 + window.width / 4 + 60,
+                             window.height / 4.45, anchor_x="center",
+                             color=arcade.color.GREEN, font_name="Yukarimobile", font_size=50 / 1980 * window.width)
+        if self.base:
+            arcade.draw_text("busy", window.width / 2 + window.width / 4, window.height / 10 - 30,
+                             color=arcade.color.RED,
+                             font_name="Yukarimobile", anchor_x="center", font_size=70 / 1980 * window.width)
 
-        arcade.draw_text("vasua", window.width / 2 + 445 / 1980 * window.width,
-                         window.height / 4.6 + 10 / 1080 * window.height, anchor_x="center",
-                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=50 / 1980 * window.width)
-
-        arcade.draw_texture_rectangle(window.width / 2, window.height / 10, self.login.width * 0.2,
-                                      self.login.height * 0.2,
-                                      self.login)
         # arcade.draw_line(0, window.height / 4.6 - 20, window.width, window.height / 4.6 - 25, arcade.color.WHITE)
         # arcade.draw_text("general", window.width / 2, window.height / 1.2, anchor_x="center",
         #                  color=arcade.color.WHITE, font_name="Yukarimobile", font_size=100 / 1980 * window.width)
@@ -425,6 +461,21 @@ class GeneralView(arcade.View):
                          self.off.height * 0.12) / 2)
         ):
             self.sounkol += 1
+
+        if (window.width / 2 <= x <= window.width / 2 + self.login.width * 0.2 and
+                window.height / 10 <= y <= window.height / 10 + self.login.height * 0.2):
+            if can(str(self.textq.text)):
+                print(f"да, ник {self.textq.text} не занят")
+                with open("env/data/user.txt", "w", encoding="utf-8") as file:
+                    file.write(self.textq.text)
+                self.nick = self.textq.text
+                self.l = False
+                self.base = False
+                start_view.l = False
+            else:
+                print("нинададядя")
+                self.base = True
+
         if self.muskol % 2 == 0:
             self.musicStat = True
             music.volume = 0.4
@@ -840,7 +891,7 @@ class LidersView(arcade.View):
             self.window.show_view(start_view)
 
 
-window = arcade.Window(fullscreen=True)
+window = arcade.Window(1980, 1080, fullscreen=True)
 
 # window = arcade.Window(fullscreen=True)
 start_view = StartView()

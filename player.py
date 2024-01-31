@@ -4,7 +4,7 @@ import time
 RIGHT_FACING = 0
 LEFT_FACING = 1
 
-
+# arcade.load_texture("env/23",)
 def load_texture_pair(filename, x, y, width, height):
     return [arcade.load_texture(filename, x, y, width, height),
             arcade.load_texture(filename, x, y, width, height, flipped_horizontally=True)]
