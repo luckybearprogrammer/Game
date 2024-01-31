@@ -1,0 +1,203 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "For_my_game.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "Ass.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "Assets3__Е.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Assets4__Е.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Assets5__T.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Assets6__T.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Assets__Tiles.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "Assets__Tiles2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/Users/admin/Downloads/Tilemap- 01.tmx": {
+            "scale": 2.711458333333333,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 160.24587014982714,
+                "y": 9.77333845562812
+            }
+        },
+        "C:/Users/admin/Downloads/Tilemap- 01.tmx#Tileset gameplay": {
+            "scaleInDock": 1
+        },
+        "C:/Users/admin/Downloads/Tilemap- 01.tmx#Tileset_FONDO": {
+            "scaleInDock": 1
+        },
+        "Cover2__Tiled.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "For_my_game.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 6292.5,
+                "y": 468.5
+            }
+        },
+        "For_my_game.tmx#entrance": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.33
+        },
+        "Grass Tiles__T.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Mine__Tiles.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "Mine_pixian_ai_T.tsx": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "Tiled/Forest TileSet Pixel Art #1 64x64__Tiled.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "Tiled/Mine_pixian_ai__T1.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "Tiled/Mine_pixian_ai__Е.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "Tiled/Simple Forest Tileset__Tiled.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tiled/SpriteSheet2__Tiled.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "Tiled/SpriteSheet__Tiled.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tiled/country-platform-tileset__T.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tiles/Social/trees__T.tsx": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "[64x64] Rocky Grass__T.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "[64x64] Rocky Grass___Tiles.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "__T.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "asssssss__T.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "country-platform-tiles-example__T.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "desert_tile__T.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "eeeeeeee__T.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "entrance__T.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "entrance__Tile.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "spritesheet__T.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/admin/Desktop/Док/Python/pyProjects/Tiles/Social",
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "openFiles": [
+        "For_my_game.tmx",
+        "Mine__Tiles.tsx",
+        "entrance__T.tsx",
+        "Tiled/Mine_pixian_ai__T1.tsx",
+        "asssssss__T.tsx",
+        "Tiled/Forest TileSet Pixel Art #1 64x64__Tiled.tsx",
+        "Mine_pixian_ai_T.tsx",
+        "Tiles/Social/trees__T.tsx"
+    ],
+    "project": "Project_1.tiled-project",
+    "recentFiles": [
+        "Tiles/Social/trees__T.tsx",
+        "Mine_pixian_ai_T.tsx",
+        "Tiled/Forest TileSet Pixel Art #1 64x64__Tiled.tsx",
+        "asssssss__T.tsx",
+        "Tiled/Mine_pixian_ai__T1.tsx",
+        "entrance__T.tsx",
+        "Mine__Tiles.tsx",
+        "For_my_game.tmx",
+        "Tiled/Mine_pixian_ai__Е.tsx",
+        "[64x64] Rocky Grass__T.tsx",
+        "Tiled/SpriteSheet2__Tiled.tsx",
+        "Assets6__T.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    }
+}
