@@ -42,7 +42,7 @@ async def top():
                 data = await response.json()
                 return data["top"].split("lol")
             else:
-                return "иди лесом"
+                return ["can'tLoad data",'1 данные']
 
 
 def result(nick):

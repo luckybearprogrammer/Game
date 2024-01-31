@@ -329,11 +329,20 @@ class StartView(arcade.View):
 
 
 class GeneralView(arcade.View):
-    def __init__(self, i):
+    def __init__(self, i=0):
         super().__init__()
         self.fon = arcade.load_texture("env/bg/fon.png")
         self.bg = []
-
+        self.general = arcade.load_texture("env/buttons/general.png")
+        self.entry = arcade.load_texture("env/buttons/entry.png")
+        self.on = arcade.load_texture("env/buttons/on.png")
+        self.off = arcade.load_texture("env/buttons/off.png")
+        self.login = arcade.load_texture("env/buttons/login.png")
+        self.musicStat = True
+        self.soundStat = True
+        self.muskol = 0
+        self.sounkol = 0
+        arcade.load_font("env/fonts/yukari.ttf")
         for i in range(1, 61):
             self.bg.append(arcade.load_texture(f"env/parallax/mainbg/full with noise{i}.jpg"))
         self.i = i
@@ -342,13 +351,90 @@ class GeneralView(arcade.View):
     def on_draw(self):
         arcade.draw_lrwh_rectangle_textured(0, 0, window.width, window.height, self.bg[self.i])
         arcade.draw_lrwh_rectangle_textured(0, 0, window.width, window.height, self.fon)
-        arcade.draw_text("general", window.width / 2, window.height / 1.2, anchor_x="center",
-                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=100 / 1980 * window.width)
+        arcade.draw_texture_rectangle(window.width / 2, window.height / 1.15,
+                                      self.general.width * (0.4 / 1980 * window.width),
+                                      self.general.height * (0.4 / 1080 * window.height), self.general)
+        arcade.draw_text("music", window.width / 6, window.height / 1.6, anchor_x="center",
+                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=80 / 1980 * window.width)
+
+        if self.musicStat:
+            arcade.draw_texture_rectangle(window.width / 1.27, window.height / 1.53,
+                                          self.on.width * (0.12 / 1980 * window.width),
+                                          self.on.height * (0.12 / 1080 * window.height), self.on)
+        else:
+            arcade.draw_texture_rectangle(window.width / 1.27, window.height / 1.53,
+                                          self.off.width * (0.12 / 1980 * window.width),
+                                          self.off.height * (0.12 / 1080 * window.height), self.off)
+
+        arcade.draw_text("sounds", window.width / 6, window.height / 2.4, anchor_x="center",
+                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=80 / 1980 * window.width)
+
+        if self.soundStat:
+            arcade.draw_texture_rectangle(window.width / 1.27, window.height / 2.33,
+                                          self.on.width * (0.12 / 1980 * window.width),
+                                          self.on.height * (0.12 / 1080 * window.height), self.on)
+        else:
+            arcade.draw_texture_rectangle(window.width / 1.27, window.height / 2.33,
+                                          self.off.width * (0.12 / 1980 * window.width),
+                                          self.off.height * (0.12 / 1080 * window.height), self.off)
+
+        arcade.draw_text("username", window.width / 6, window.height / 4.6, anchor_x="center",
+                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=80 / 1980 * window.width)
+
+        arcade.draw_lrwh_rectangle_textured(window.width / 2 + window.width / 6,
+                                            window.height / 4.6 - 20 / 1080 * window.height,
+                                            self.entry.width * 0.4 / 1980 * window.width,
+                                            self.entry.height * 0.4 / 1080 * window.height, self.entry)
+
+        arcade.draw_text("vasua", window.width / 2 + 445 / 1980 * window.width,
+                         window.height / 4.6 + 10 / 1080 * window.height, anchor_x="center",
+                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=50 / 1980 * window.width)
+
+        arcade.draw_texture_rectangle(window.width / 2, window.height / 10, self.login.width * 0.2,
+                                      self.login.height * 0.2,
+                                      self.login)
+        # arcade.draw_line(0, window.height / 4.6 - 20, window.width, window.height / 4.6 - 25, arcade.color.WHITE)
+        # arcade.draw_text("general", window.width / 2, window.height / 1.2, anchor_x="center",
+        #                  color=arcade.color.WHITE, font_name="Yukarimobile", font_size=100 / 1980 * window.width)
         if time.time() - self.start > 1 / 9:
             self.i += 1
             self.start = time.time()
         if self.i >= 60:
             self.i = 0
+
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+        if (
+                (window.width / 1.27 - (self.on.width * 0.12) / 2 <= x <= window.width / 1.27 + (
+                        self.on.width * 0.12) / 2
+                 and window.height / 1.53 - (self.on.height * 0.12) / 2 <= y <= window.height / 1.53 + (
+                         self.on.height * 0.12) / 2) or
+                (window.width / 1.27 - (self.off.width * 0.12) / 2 <= x <= window.width / 1.27 + (
+                        self.off.width * 0.12) / 2
+                 and window.height / 1.53 - (self.off.height * 0.12) / 2 <= y <= window.height / 1.53 + (
+                         self.off.height * 0.12) / 2)
+        ):
+            self.muskol += 1
+        elif (
+                (window.width / 1.27 - (self.on.width * 0.12) / 2 <= x <= window.width / 1.27 + (
+                        self.on.width * 0.12) / 2
+                 and window.height / 2.33 - (self.on.height * 0.12) / 2 <= y <= window.height / 2.33 + (
+                         self.on.height * 0.12) / 2) or
+                (window.width / 1.27 - (self.off.width * 0.12) / 2 <= x <= window.width / 1.27 + (
+                        self.off.width * 0.12) / 2
+                 and window.height / 2.33 - (self.off.height * 0.12) / 2 <= y <= window.height / 2.33 + (
+                         self.off.height * 0.12) / 2)
+        ):
+            self.sounkol += 1
+        if self.muskol % 2 == 0:
+            self.musicStat = True
+            music.volume = 0.4
+        else:
+            self.musicStat = False
+            music.volume = 0
+        if self.sounkol % 2 == 0:
+            self.soundStat = True
+        else:
+            self.soundStat = False
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
@@ -604,9 +690,12 @@ class GameView(arcade.View):
         if not self.camera.position.x + window.width >= 200 * 64 * self.tile_map.scaling:
             self.camera.move_to((screen_center_x_1, screen_center_y_1))
         else:
-            chipsView.camerax = self.camera.position.x
-            chipsView.cameray = self.camera.position.y
-            self.window.show_view(chipsView)
+            pass
+            # chipsView.camerax = self.camera.position.x
+            # chipsView.cameray = self.camera.position.y
+            # self.window.show_view(chipsView)
+            # self.camera.position = 0, 0
+            # self.window.show_view(start_view)
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.RIGHT:
@@ -673,7 +762,8 @@ class ChipsView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             self.window.show_view(start_view)
 
-#тест
+
+# тест
 class LidersView(arcade.View):
     def __init__(self):
         # self.startProgramm = time.time()
@@ -751,9 +841,6 @@ class LidersView(arcade.View):
 
 
 window = arcade.Window(fullscreen=True)
-
-# Load the icon image
-
 
 # window = arcade.Window(fullscreen=True)
 start_view = StartView()
