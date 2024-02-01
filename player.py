@@ -11,8 +11,8 @@ def load_texture_pair(filename, x, y, width, height):
 
 
 class Player(arcade.Sprite):
-    def __init__(self):
-        super().__init__(scale=3)
+    def __init__(self,scale=3):
+        super().__init__(scale=scale)
         self.person_face_direction = RIGHT_FACING
         self.run_texture = []
         for i in range(10):
