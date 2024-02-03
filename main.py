@@ -274,7 +274,7 @@ class StartView(arcade.View):
                 window.height / 1.7 <= y <=
                 window.height / 1.7 + self.startDinamic.height * (0.23 / 1080 * window.height)):
             arcade.play_sound(self.huh)
-            self.window.show_view(gameView)
+            self.window.show_view(GameView())
         if (window.width / 33 <= x <= window.width / 33 + self.exitStatic.width * 0.08 and
                 window.height / 9 <= y <= window.height / 9 + self.exitStatic.height * 0.08):
             window.close()
@@ -531,6 +531,12 @@ class GameView(arcade.View):
         self.enemy_list.draw()
         self.camera.use()
         self.player.draw()
+        if self.camera.position.x + window.width >= 200 * 64 * self.tile_map.scaling:
+            self.camera.move_to((0, 0))
+            self.camera.use()
+            print(self.camera.position)
+            self.window.show_view(start_view)
+            print("я сменил")
         arcade.draw_rectangle_filled(self.camera.position.x + window.width / 2, window.height / 1.025,
                                      self.player.position[0] / 200 * 64 * self.tile_map.scaling / (
                                              7 / 1980 * window.width),
@@ -553,6 +559,7 @@ class GameView(arcade.View):
         self.player.update_animation()
         if self.player.center_x <= self.player.width / 4:
             self.player.center_x = self.player.width / 4
+
         # if self.player.center_x >= self.width - self.player.width / 4:
         #     self.player.center_x = self.width - self.player.width / 4
         # for enemy in self.enemy_list:
@@ -569,20 +576,13 @@ class GameView(arcade.View):
                                                              gravity_constant=1.8 / 1980 * window.width)
 
     def center_camera_to_player(self):
+        print(self.camera.position)
+        print(" а я все еще работаю")
         screen_center_x_1 = self.player.center_x - self.camera.viewport_width / 2
         screen_center_y_1 = window.height / 32
         if screen_center_x_1 < 0:
             screen_center_x_1 = 0
-        if not self.camera.position.x + window.width >= 200 * 64 * self.tile_map.scaling:
-            self.camera.move_to((screen_center_x_1, 0),0.05)
-        else:
-            # self.lol=False
-            pass
-            # chipsView.camerax = self.camera.position.x
-            # chipsView.cameray = self.camera.position.y
-            # self.window.show_view(chipsView)
-            # self.camera.position = 0, 0
-            # self.window.show_view(start_view)
+        self.camera.move_to((screen_center_x_1, 0), 0.05)
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.RIGHT:
@@ -600,13 +600,13 @@ class GameView(arcade.View):
             if self.physics_engine.can_jump():
                 self.player.change_y = 20 / 1080 * window.height
         if symbol == arcade.key.L:
-
             # self.player.position = 50 * self.tile_map.scaling, 384 * self.tile_map.scaling
             # screen_center_x_1 = self.player.center_x - self.camera.viewport_width / 2
-            self.camera.move((-self.player.center_x, 0))
+            pass
+            # self.camera.move((-self.player.center_x, 0))
             #
             # # print(self.camera.position)
-            self.window.show_view(start_view)
+            # self.window.show_view(start_view)
 
     def on_key_release(self, symbol: int, modifiers: int):
         if symbol == arcade.key.RIGHT:
@@ -663,6 +663,7 @@ class LidersView(arcade.View):
     def __init__(self):
         # self.startProgramm = time.time()
         super().__init__()
+        self.fon = arcade.load_texture("env/bg/translucent-image.png")
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
         arcade.load_font("env/fonts/yukari.ttf")
@@ -727,7 +728,7 @@ class LidersView(arcade.View):
             self.i = 0
         # arcade.draw_lrwh_rectangle_textured(0, 0, window.width, window.height, self.bg)
         arcade.draw_lrwh_rectangle_textured(0, 0, window.width, window.height, self.bgTexture[self.i])
-
+        arcade.draw_lrwh_rectangle_textured(0, 0, window.width, window.height, self.fon)
         self.manager.draw()
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -735,7 +736,7 @@ class LidersView(arcade.View):
             self.window.show_view(start_view)
 
 
-window = arcade.Window(1980, 1080, fullscreen=True)
+window = arcade.Window(1980, 1080)
 
 # window = arcade.Window(fullscreen=True)
 start_view = StartView()
