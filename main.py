@@ -500,9 +500,11 @@ class GameView(arcade.View):
         self.player = Player(3)
         self.camera = arcade.Camera(window.width, window.height)
         self.enemy_list = arcade.SpriteList()
-        self.tile_map = arcade.load_tilemap("env/For_my_game.tmx", 1.1)
+        self.tile_map = arcade.load_tilemap("env/For_my_game.tmx", window.height / (64 * 16))
         print(self.tile_map.sprite_lists)
         self.scene = arcade.Scene()
+        self.game_height = self.tile_map.height / 2
+        self.game_width = self.window.width / 2
         self.background_list = arcade.SpriteList()
         self.background_list_2 = arcade.SpriteList()
         for i in self.tile_map.sprite_lists['Platforms']:
@@ -535,10 +537,10 @@ class GameView(arcade.View):
         arcade.draw_rectangle_filled(self.camera.position.x + window.width / 2, window.height / 1.025,
                                      self.player.position[0] / 200 * 64 * self.tile_map.scaling / (
                                              7 / 1980 * window.width),
-                                     50 / 1080 * window.height, (245, 148, 24))
+                                     50 / 1080 * window.height, (154, 205, 50))
         arcade.draw_rectangle_outline(self.camera.position.x + window.width / 2, window.height / 1.025,
                                       660 / 1980 * window.width, 50 / 1080 * window.height,
-                                      arcade.color.WHITE)
+                                      arcade.color.WHITE, 5)
         # print(self.player.position[0] / 200 * 64 * self.tile_map.scaling / 7)
         # print(self.player.center_x)
         if self.player.center_y < 0:
@@ -566,6 +568,7 @@ class GameView(arcade.View):
             self.player.center_x = self.player.width / 4
         # if self.player.center_x >= self.width - self.player.width / 4:
         #     self.player.center_x = self.width - self.player.width / 4
+
         for enemy in self.enemy_list:
             death_list = arcade.check_for_collision_with_list(self.player, self.enemy_list)
             if death_list:
@@ -581,11 +584,11 @@ class GameView(arcade.View):
 
     def center_camera_to_player(self):
         screen_center_x_1 = self.player.center_x - self.camera.viewport_width / 2
-        screen_center_y_1 = window.height / 32
         if screen_center_x_1 < 0:
             screen_center_x_1 = 0
         if not self.camera.position.x + window.width >= 200 * 64 * self.tile_map.scaling:
             self.camera.move_to((screen_center_x_1, 0), 0.05)
+
         else:
             # self.lol=False
             pass
