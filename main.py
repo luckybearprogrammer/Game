@@ -273,8 +273,8 @@ class StartView(arcade.View):
                 window.width / 35 + self.startDinamic.width * (0.23 / 1980 * window.width) and
                 window.height / 1.7 <= y <=
                 window.height / 1.7 + self.startDinamic.height * (0.23 / 1080 * window.height)):
-            arcade.play_sound(self.huh)
-            self.window.show_view(gameView)
+            # arcade.play_sound(self.huh)
+            self.window.show_view(GameView())
         if (window.width / 33 <= x <= window.width / 33 + self.exitStatic.width * 0.08 and
                 window.height / 9 <= y <= window.height / 9 + self.exitStatic.height * 0.08):
             window.close()
@@ -418,10 +418,11 @@ class GeneralView(arcade.View):
                                  color=arcade.color.WHITE, font_name="Yukarimobile", font_size=50 / 1980 * window.width,
                                  width=window.width / 4)
             else:
-                arcade.draw_text("so long", window.width / 6, window.height / 10 - 30, color=arcade.color.RED,
+                arcade.draw_text("so long", window.width / 6, window.height / 10 - (30 / 1980 * window.width),
+                                 color=arcade.color.RED,
                                  font_name="Yukarimobile", anchor_x="center", font_size=80 / 1980 * window.width)
         else:
-            arcade.draw_text(self.nick, window.width / 2 + window.width / 4 + 60,
+            arcade.draw_text(self.nick, window.width / 2 + window.width / 4 + (60 / 1980 * window.width),
                              window.height / 4.45, anchor_x="center",
                              color=arcade.color.GREEN, font_name="Yukarimobile", font_size=50 / 1980 * window.width)
         if self.base:
@@ -496,10 +497,10 @@ class GeneralView(arcade.View):
 class GameView(arcade.View):
     def __init__(self):
         super().__init__()
-        self.player = Player(3 / 1980 * window.width)
+        self.player = Player(3)
         self.camera = arcade.Camera(window.width, window.height)
         self.enemy_list = arcade.SpriteList()
-        self.tile_map = arcade.load_tilemap("env/For_my_game.tmx", 1 / 1980 * window.width)
+        self.tile_map = arcade.load_tilemap("env/For_my_game.tmx", 1.1)
         print(self.tile_map.sprite_lists)
         self.scene = arcade.Scene()
         self.background_list = arcade.SpriteList()
@@ -536,13 +537,17 @@ class GameView(arcade.View):
                                              7 / 1980 * window.width),
                                      50 / 1080 * window.height, (245, 148, 24))
         arcade.draw_rectangle_outline(self.camera.position.x + window.width / 2, window.height / 1.025,
-                                      545 / 1980 * window.width, 50 / 1080 * window.height,
+                                      660 / 1980 * window.width, 50 / 1080 * window.height,
                                       arcade.color.WHITE)
         # print(self.player.position[0] / 200 * 64 * self.tile_map.scaling / 7)
+        # print(self.player.center_x)
+        if self.player.center_y < 0:
+            self.camera.move_to((0, 0))
+            self.camera.use()
+            self.window.show_view(GameOver())
         if self.camera.position.x + window.width >= 200 * 64 * self.tile_map.scaling:
             self.camera.move_to((0, 0))
             self.camera.use()
-            print(self.camera.position)
             self.window.show_view(start_view)
             print("я сменил")
 
@@ -561,12 +566,12 @@ class GameView(arcade.View):
             self.player.center_x = self.player.width / 4
         # if self.player.center_x >= self.width - self.player.width / 4:
         #     self.player.center_x = self.width - self.player.width / 4
-        # for enemy in self.enemy_list:
-        #     death_list = arcade.check_for_collision_with_list(self.player, self.enemy_list)
-        #     if death_list:
-        #         enemy.kill()
-        #         print("Game over")
-        #         window.close()
+        for enemy in self.enemy_list:
+            death_list = arcade.check_for_collision_with_list(self.player, self.enemy_list)
+            if death_list:
+                self.camera.move_to((0, 0))
+                self.camera.use()
+                self.window.show_view(GameOver())
 
     def setup(self):
         self.scene.add_sprite_list('Player')
@@ -580,7 +585,7 @@ class GameView(arcade.View):
         if screen_center_x_1 < 0:
             screen_center_x_1 = 0
         if not self.camera.position.x + window.width >= 200 * 64 * self.tile_map.scaling:
-            self.camera.move_to((screen_center_x_1, 0),0.05)
+            self.camera.move_to((screen_center_x_1, 0), 0.05)
         else:
             # self.lol=False
             pass
@@ -606,13 +611,13 @@ class GameView(arcade.View):
             if self.physics_engine.can_jump():
                 self.player.change_y = 20 / 1080 * window.height
         if symbol == arcade.key.L:
-
             # self.player.position = 50 * self.tile_map.scaling, 384 * self.tile_map.scaling
             # screen_center_x_1 = self.player.center_x - self.camera.viewport_width / 2
-            self.camera.move((-self.player.center_x, 0))
-            #
-            # # print(self.camera.position)
-            self.window.show_view(start_view)
+            self.camera.move_to((0, 0))
+            self.camera.use()
+            print(self.camera.position)
+            self.window.show_view(chipsView)
+            print("я сменил")
 
     def on_key_release(self, symbol: int, modifiers: int):
         if symbol == arcade.key.RIGHT:
@@ -634,30 +639,50 @@ class GameView(arcade.View):
             self.player.position = 180 * 64 * self.tile_map.scaling, 100
 
 
+class GameOver(arcade.View):
+    def __init__(self):
+        super().__init__()
+        arcade.load_font("env/fonts/yukari.ttf")
+        self.bg = arcade.load_texture("env/bg/gameover.jpg")
+        # arcade.set_background_color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_lrwh_rectangle_textured(0, 0, window.width, window.height, self.bg)
+        arcade.draw_text("Game OVER", window.width / 2, window.height / 1.3, anchor_x="center",
+                         color=arcade.color.DARK_BLUE,
+                         font_name="Yukarimobile", font_size=100 / 1980 * window.width)
+        arcade.draw_text("press any key for return", window.width / 2, window.height / 15, anchor_x="center",
+                         color=arcade.color.WHITE,
+                         font_name="Yukarimobile", font_size=60 / 1980 * window.width)
+    def on_key_press(self, symbol: int, modifiers: int):
+        self.window.show_view(start_view)
+
+
 class ChipsView(arcade.View):
-    def __init__(self, x=0, y=0):
+    def __init__(self):
         super().__init__()
         self.z = 0
-        self.camerax = x
-        self.cameray = y
         self.bg = []
-        # for i in range(1, 832):
-        #     self.bg.append(arcade.load_texture(f"env/mem/cadr{i}.jpg"))
+        for i in range(38):
+            self.bg.append(arcade.load_texture(f"env/bg/pin/cadr{i}.jpg"))
         self.start = time.time()
 
         self.i = 0
 
     def on_show_view(self):
-        arcade.play_sound(arcade.load_sound("env/mem/Мужик-ест-чипсы.mp3"), looping=True, volume=0.4)
+        arcade.play_sound(arcade.load_sound("env/music/los-pinguinos-me-la-van-a-mascar_s5kyR4g.mp3"), looping=True)
 
     def on_draw(self):
         self.clear()
-        # if time.time() - self.start >= 1 / 60:
-        #     self.i += 1
-        # if self.i >= 831:
-        #     self.i = 0
-        # arcade.draw_lrwh_rectangle_textured(self.camerax - self.z, self.cameray, window.width, window.height,
-        #                                     self.bg[self.i])
+
+        if self.i >= len(self.bg):
+            self.i = 0
+        arcade.draw_lrwh_rectangle_textured(0, 0, window.width, window.height,
+                                            self.bg[self.i])
+        if time.time() - self.start >= 1 / 15:
+            self.i += 1
+            self.start = time.time()
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == arcade.key.ESCAPE:
@@ -673,7 +698,6 @@ class LidersView(arcade.View):
         self.manager.enable()
         arcade.load_font("env/fonts/yukari.ttf")
         x = random.randint(0, 1)
-        print(x)
         if x == 0:
             self.bgTexture = [arcade.load_texture(f"env/bg/bg1/cadr{i}.jpg") for i in range(7)]
             self.perelist = 1 / 15
@@ -741,7 +765,7 @@ class LidersView(arcade.View):
             self.window.show_view(start_view)
 
 
-window = arcade.Window(1980, 1080, fullscreen=True)
+window = arcade.Window(1980, 1080,fullscreen=True)
 
 # window = arcade.Window(fullscreen=True)
 start_view = StartView()
