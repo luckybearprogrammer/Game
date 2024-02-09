@@ -550,7 +550,7 @@ class GameView(arcade.View):
         if self.camera.position.x + window.width >= 200 * 64 * self.tile_map.scaling:
             self.camera.move_to((0, 0))
             self.camera.use()
-            self.window.show_view(start_view)
+            self.window.show_view(Victory())
             print("я сменил")
 
     def on_update(self, delta_time: float):
@@ -569,12 +569,12 @@ class GameView(arcade.View):
         # if self.player.center_x >= self.width - self.player.width / 4:
         #     self.player.center_x = self.width - self.player.width / 4
 
-        for enemy in self.enemy_list:
-            death_list = arcade.check_for_collision_with_list(self.player, self.enemy_list)
-            if death_list:
-                self.camera.move_to((0, 0))
-                self.camera.use()
-                self.window.show_view(GameOver())
+        # for enemy in self.enemy_list:
+        #     death_list = arcade.check_for_collision_with_list(self.player, self.enemy_list)
+        #     if death_list:
+        #         self.camera.move_to((0, 0))
+        #         self.camera.use()
+        #         self.window.show_view(GameOver())
 
     def setup(self):
         self.scene.add_sprite_list('Player')
@@ -659,6 +659,26 @@ class GameOver(arcade.View):
                          color=arcade.color.WHITE,
                          font_name="Yukarimobile", font_size=60 / 1980 * window.width)
     def on_key_press(self, symbol: int, modifiers: int):
+        self.window.show_view(start_view)
+
+
+class Victory(arcade.View):
+    def __init__(self):
+        super().__init__()
+        arcade.load_font("env/fonts/yukari.ttf")
+        self.bg = arcade.load_texture("env/bg/Winner.jpg")
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_lrwh_rectangle_textured(0, 0, window.width, window.height, self.bg)
+        arcade.draw_text("Victory", window.width / 2, window.height / 1.3, anchor_x="center",
+                         color=arcade.color.DARK_RED,
+                         font_name="Yukarimobile", font_size=100 / 1980 * window.width)
+        arcade.draw_text("press the mouse button for return", window.width / 2, window.height / 15, anchor_x="center",
+                         color=arcade.color.WHITE,
+                         font_name="Yukarimobile", font_size=60 / 1980 * window.width)
+
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         self.window.show_view(start_view)
 
 
