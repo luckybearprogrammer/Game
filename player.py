@@ -15,6 +15,7 @@ class Player(arcade.Sprite):
         super().__init__(scale=scale)
         self.person_face_direction = RIGHT_FACING
         self.run_texture = []
+        self.player_position = self.position
         for i in range(10):
             texture = load_texture_pair(f"env/sprite/Colour1/Outline/120x80_PNGSheets/_Run.png", x=i * 120, y=0,
                                         width=120, height=80)
