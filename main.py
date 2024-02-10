@@ -345,7 +345,7 @@ class GeneralView(arcade.View):
         for i in range(1, 61):
             self.bg.append(arcade.load_texture(f"env/parallax/mainbg/full with noise{i}.jpg"))
         self.i = i
-
+        self.d = 'd'
         self.base = False
 
         with open("env/data/user.txt", "r", encoding="utf-8") as file:
