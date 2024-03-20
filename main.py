@@ -218,7 +218,7 @@ class StartView(arcade.View):
         #                  window.height, arcade.color.WHITE)
         # arcade.draw_line(window.width / 7 + (self.resultTexture.width * (0.13 / 1980 * window.width)) / 2, 0,
         #                  window.width / 7 + (self.resultTexture.width * (0.13 / 1980 * window.width)) / 2,
-        #                  window.height, arcade.color.WHITE)
+        #    т              window.height, arcade.color.WHITE)
         # arcade.draw_line(0, window.height / 3, window.width, window.height / 3, arcade.color.WHITE)
 
         arcade.draw_lrwh_rectangle_textured(window.width / 22, window.height / 4.8,
