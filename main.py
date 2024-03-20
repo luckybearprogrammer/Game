@@ -9,17 +9,18 @@ import asyncio
 
 LANGUAGE = "rus"
 # arcade.load_animated_gif()
-music = arcade.play_sound(arcade.load_sound("env/music/Celtic.mp3"), looping=True, volume=0.4)
+music = arcade.play_sound(arcade.load_sound("env/music/bgmusic.mp3"), looping=True, volume=0.4)
 with open("env/data/user.txt", "r", encoding="utf-8") as file:
     for line in file:
         nick = line.strip()
 mesto = getMesto(nick)
-
+a=[]
 
 def resultata():
+    global a
     with open("env/data/records.txt", "r", encoding="utf-8") as file:
         a = [int(line.strip()) for line in file]
-        return [max(a), a[-1]]
+        return [min(a), a[-1]]
 
 
 # music.volume=0
@@ -345,7 +346,7 @@ class GeneralView(arcade.View):
         for i in range(1, 61):
             self.bg.append(arcade.load_texture(f"env/parallax/mainbg/full with noise{i}.jpg"))
         self.i = i
-        self.d = 'd'
+
         self.base = False
 
         with open("env/data/user.txt", "r", encoding="utf-8") as file:
@@ -498,6 +499,8 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         self.player = Player(3)
+        self.startTime = time.time()
+        arcade.load_font("env/fonts/yukari.ttf")
         self.camera = arcade.Camera(window.width, window.height)
         self.enemy_list = arcade.SpriteList()
         self.tile_map = arcade.load_tilemap("env/For_my_game.tmx", window.height / (64 * 16))
@@ -505,6 +508,7 @@ class GameView(arcade.View):
         self.scene = arcade.Scene()
         self.game_height = self.tile_map.height / 2
         self.game_width = self.window.width / 2
+        self.life = 10000
         self.background_list = arcade.SpriteList()
         self.background_list_2 = arcade.SpriteList()
         for i in self.tile_map.sprite_lists['Platforms']:
@@ -516,11 +520,7 @@ class GameView(arcade.View):
         for i in self.tile_map.sprite_lists['Enemy']:
             self.enemy_list.append(i)
         self.lol = True
-        self.generalStatic = arcade.load_texture("env/buttons/genStatic.png")
-        self.generalDinamic = arcade.load_texture("env/buttons/genDinamic.png")
-        self.angle = 0
-        self.i = 0
-        self.position = self.camera.position
+
         self.setup()
 
     #
@@ -538,13 +538,30 @@ class GameView(arcade.View):
         self.enemy_list.draw()
         self.camera.use()
         self.player.draw()
-        arcade.draw_rectangle_filled(self.camera.position.x + window.width / 2, window.height / 1.025,
+        arcade.draw_rectangle_filled(self.camera.position.x + window.width / 2, window.height / 1.05,
                                      self.player.position[0] / 200 * 64 * self.tile_map.scaling / (
                                              7 / 1980 * window.width),
                                      50 / 1080 * window.height, (154, 205, 50))
-        arcade.draw_rectangle_outline(self.camera.position.x + window.width / 2, window.height / 1.025,
+        arcade.draw_rectangle_outline(self.camera.position.x + window.width / 2, window.height / 1.05,
                                       660 / 1980 * window.width, 50 / 1080 * window.height,
                                       arcade.color.WHITE, 5)
+
+        arcade.draw_rectangle_filled(self.player.center_x - 10 / 1980 * window.width, self.player.top +
+                                     30 / 1080 * window.height, 0.012 * self.life,
+                                     20 / 1080 * window.height, arcade.color.RED, 1)
+        arcade.draw_rectangle_outline(self.player.center_x - 10 / 1980 * window.width, self.player.top +
+                                      30 / 1080 * window.height, 120,
+                                      20 / 1080 * window.height, arcade.color.WHITE, 2)
+
+        elapsed_time = time.time() - self.startTime
+
+        # Переводим разницу времени в минуты, секунды и миллисекунды
+        minutes = int(elapsed_time // 60)
+        seconds = int(elapsed_time % 60)
+        milliseconds = int((elapsed_time % 1) * 1000)
+
+        arcade.draw_text(f"{minutes}m {seconds}s {milliseconds}mc", self.camera.position.x + window.width / 12,
+                         window.height / 1.07, font_name="Yukarimobile", font_size=40 / 1980 * window.width)
         # print(self.player.position[0] / 200 * 64 * self.tile_map.scaling / 7)
         # print(self.player.center_x)
         if self.player.center_y < 0:
@@ -554,21 +571,12 @@ class GameView(arcade.View):
         if self.camera.position.x + window.width >= 200 * 64 * self.tile_map.scaling:
             self.camera.move_to((0, 0))
             self.camera.use()
-            self.window.show_view(Victory())
+            with open("env/data/records.txt", "a+", encoding="utf-8") as file:
+                file.write(f"{int((minutes * 60 + seconds + milliseconds // 1000) * (10000-self.life) / 10000)}\n")
+            if int((minutes * 60 + seconds + milliseconds // 1000) * (10000-self.life) / 10000)<min(a):
+                send_number_to_api(int((minutes * 60 + seconds + milliseconds // 1000) * (10000-self.life) / 10000),nick)
+            self.window.show_view(Victory(f"{minutes}m {seconds}s {milliseconds}mc"))
             print("я сменил")
-        self.angle += 0.5
-        arcade.draw_lrwh_rectangle_textured(self.camera.position.x + window.width / 1.0999, window.height / 1.11,
-                                            self.generalStatic.width * (0.09 / 1980 * window.width),
-                                            self.generalStatic.height * (0.09 / 1980 * window.width),
-                                            self.generalStatic, self.angle)
-        if (self.camera.position.x + window.width / 1.0999 <= window._mouse_x <=
-                self.camera.position.x + window.width / 1.0999 + self.generalStatic.width * (0.09 / 1980 * window.width) and
-                window.height / 1.11 <= window._mouse_y <=
-                window.height / 1.11 + self.generalStatic.height * (0.09 / 1980 * window.width)):
-            arcade.draw_lrwh_rectangle_textured(self.camera.position.x + window.width / 1.0999, window.height / 1.11,
-                                                self.generalStatic.width * (0.09 / 1980 * window.width),
-                                                self.generalStatic.height * (0.09 / 1980 * window.width),
-                                                self.generalDinamic, self.angle)
 
     def on_update(self, delta_time: float):
         self.background_list.update()
@@ -583,16 +591,17 @@ class GameView(arcade.View):
         self.player.update_animation()
         if self.player.center_x <= self.player.width / 4:
             self.player.center_x = self.player.width / 4
-        self.player.player_position = self.player.position
         # if self.player.center_x >= self.width - self.player.width / 4:
         #     self.player.center_x = self.width - self.player.width / 4
 
-        # for enemy in self.enemy_list:
-        #     death_list = arcade.check_for_collision_with_list(self.player, self.enemy_list)
-        #     if death_list:
-        #         self.camera.move_to((0, 0))
-        #         self.camera.use()
-        #         self.window.show_view(GameOver())
+        for enemy in self.enemy_list:
+            death_list = arcade.check_for_collision_with_list(self.player, self.enemy_list)
+            if death_list and self.life <= 0:
+                self.camera.move_to((0, 0))
+                self.camera.use()
+                self.window.show_view(GameOver())
+            elif death_list:
+                self.life -= 2
 
     def setup(self):
         self.scene.add_sprite_list('Player')
@@ -640,6 +649,20 @@ class GameView(arcade.View):
             self.window.show_view(chipsView)
             print("я сменил")
 
+        if symbol == arcade.key.K:
+            self.camera.move_to((0, 0))
+            self.camera.use()
+            elapsed_time = time.time() - self.startTime
+            minutes = int(elapsed_time // 60)
+            seconds = int(elapsed_time % 60)
+            milliseconds = int((elapsed_time % 1) * 1000)
+            with open("env/data/records.txt", "a+", encoding="utf-8") as file:
+                file.write(f"{int((minutes * 60 + seconds + milliseconds // 1000) * (10000-self.life) / 10000)}\n")
+            if int((minutes * 60 + seconds + milliseconds // 1000) * (10000 - self.life) / 10000) < min(a):
+                send_number_to_api(int((minutes * 60 + seconds + milliseconds // 1000) * (10000 - self.life) / 10000),
+                                   nick)
+            self.window.show_view(Victory(f"{minutes}m {seconds}s {milliseconds}mc"))
+
     def on_key_release(self, symbol: int, modifiers: int):
         if symbol == arcade.key.RIGHT:
             self.player.change_x = 0
@@ -659,14 +682,6 @@ class GameView(arcade.View):
         if symbol == arcade.key.E:
             self.player.position = 180 * 64 * self.tile_map.scaling, 100
 
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
-        if (window.width / 1.0999 <= x <= window.width / 1.0999 + self.generalStatic.width * 0.09 + self.camera.position.x and
-                window.height / 1.11 <= y <= window.height / 1.11 + self.generalStatic.height * 0.09 + self.camera.position.x):
-            generalView.i = self.i
-            self.camera.use()
-            self.window.show_view(Settings())
-
-
 
 class GameOver(arcade.View):
     def __init__(self):
@@ -684,13 +699,15 @@ class GameOver(arcade.View):
         arcade.draw_text("press any key for return", window.width / 2, window.height / 15, anchor_x="center",
                          color=arcade.color.WHITE,
                          font_name="Yukarimobile", font_size=60 / 1980 * window.width)
+
     def on_key_press(self, symbol: int, modifiers: int):
         self.window.show_view(start_view)
 
 
 class Victory(arcade.View):
-    def __init__(self):
+    def __init__(self, timeEnd=""):
         super().__init__()
+        self.timeEnd = timeEnd
         arcade.load_font("env/fonts/yukari.ttf")
         self.bg = arcade.load_texture("env/bg/Winner.jpg")
 
@@ -700,99 +717,16 @@ class Victory(arcade.View):
         arcade.draw_text("Victory", window.width / 2, window.height / 1.3, anchor_x="center",
                          color=arcade.color.DARK_RED,
                          font_name="Yukarimobile", font_size=100 / 1980 * window.width)
+
+        arcade.draw_text(f"your time is " + self.timeEnd, window.width / 2, window.height / 6, anchor_x="center",
+                         color=arcade.color.WHITE,
+                         font_name="Yukarimobile", font_size=60 / 1980 * window.width)
         arcade.draw_text("press the mouse button for return", window.width / 2, window.height / 15, anchor_x="center",
                          color=arcade.color.WHITE,
                          font_name="Yukarimobile", font_size=60 / 1980 * window.width)
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         self.window.show_view(start_view)
-
-
-class Settings(arcade.View):
-    def __init__(self):
-        super().__init__()
-        arcade.load_font("env/fonts/yukari.ttf")
-        self.bg = arcade.load_texture("env/bg/Settings_5.jpg")
-        self.on = arcade.load_texture("env/buttons/on.png")
-        self.off = arcade.load_texture("env/buttons/off.png")
-        self.return_t = arcade.load_texture("env/buttons/return_texture.png")
-        self.return_tg = arcade.load_texture("env/buttons/return_texture_g.png")
-        self.return_tg_f = arcade.load_texture("env/buttons/return_texture_filled_c1.png")
-        self.musicStat = True
-        self.soundStat = True
-        self.exitStatic = arcade.load_texture("env/buttons/exitStatic.png")
-        self.exitDinamic = arcade.load_texture("env/buttons/exitDinamic.png")
-        self.camera = arcade.Camera(window.width, window.height)
-
-    def on_draw(self):
-        self.clear()
-        arcade.draw_lrwh_rectangle_textured(0 + self.camera.position.x, 0 + self.camera.position.x,
-                                            window.width, window.height, self.bg)
-        arcade.draw_text("Settings", window.width / 2 + self.camera.position.x, window.height - 100 +
-                         self.camera.position.x, anchor_x="center",
-                         color=arcade.color.DARK_GRAY, font_name="Yukarimobile", font_size=90 / 1980 * window.width)
-        arcade.draw_text("Settings", window.width / 2 - 10 + self.camera.position.x, window.height - 100 +
-                         self.camera.position.x, anchor_x="center",
-                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=90 / 1980 * window.width)
-        arcade.draw_text("music", 10 + window.width / 6 + self.camera.position.x, window.height / 1.6 +
-                         self.camera.position.x, anchor_x="center",
-                         color=arcade.color.DARK_GRAY, font_name="Yukarimobile", font_size=80 / 1980 * window.width)
-        arcade.draw_text("music", window.width / 6 + self.camera.position.x, window.height / 1.6 +
-                         self.camera.position.x, anchor_x="center",
-                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=80 / 1980 * window.width)
-        arcade.draw_scaled_texture_rectangle(10 + window.width / 2 + self.camera.position.x, window.height / 5 - 2,
-                                             self.return_tg, 0.7)
-        arcade.draw_scaled_texture_rectangle(window.width / 2 + self.camera.position.x, window.height / 5,
-                                             self.return_t, 0.7)
-        if self.musicStat:
-            arcade.draw_texture_rectangle(window.width / 1.27, window.height / 1.53,
-                                          self.on.width * (0.12 / 1980 * window.width),
-                                          self.on.height * (0.12 / 1080 * window.height), self.on)
-        else:
-            arcade.draw_texture_rectangle(window.width / 1.27, window.height / 1.53,
-                                          self.off.width * (0.12 / 1980 * window.width),
-                                          self.off.height * (0.12 / 1080 * window.height), self.off)
-        arcade.draw_text("sounds", 10 + window.width / 6 + self.camera.position.x,
-                         window.height / 2.4 + self.camera.position.x, anchor_x="center",
-                         color=arcade.color.DARK_GRAY, font_name="Yukarimobile", font_size=80 / 1980 * window.width)
-        arcade.draw_text("sounds", window.width / 6 + self.camera.position.x,
-                         window.height / 2.4 + self.camera.position.x, anchor_x="center",
-                         color=arcade.color.WHITE, font_name="Yukarimobile", font_size=80 / 1980 * window.width)
-        self.camera.use()
-        if self.soundStat:
-            arcade.draw_texture_rectangle(window.width / 1.27, window.height / 2.33,
-                                          self.on.width * (0.12 / 1980 * window.width),
-                                          self.on.height * (0.12 / 1080 * window.height), self.on)
-        else:
-            arcade.draw_texture_rectangle(window.width / 1.27, window.height / 2.33,
-                                          self.off.width * (0.12 / 1980 * window.width),
-                                          self.off.height * (0.12 / 1080 * window.height), self.off)
-        arcade.draw_lrwh_rectangle_textured(window.width / 33, window.height / 9,
-                                            self.exitStatic.width * (0.08 / 1980 * window.width),
-                                            self.exitStatic.height * (0.08 / 1080 * window.height), self.exitStatic)
-        if (window.width / 33 <= window._mouse_x <=
-                window.width / 33 + self.exitStatic.width * (0.08 / 1980 * window.width) and
-                window.height / 9 <= window._mouse_y <=
-                window.height / 9 + self.exitStatic.height * (0.08 / 1080 * window.height)):
-            arcade.draw_lrwh_rectangle_textured(window.width / 33, window.height / 9,
-                                                self.exitStatic.width * (0.08 / 1980 * window.width),
-                                                self.exitStatic.height * (0.08 / 1080 * window.height),
-                                                self.exitDinamic)
-        if (window.width / 2 - self.return_t.width * 0.7 / 2 <= window._mouse_x
-                <= window.width / 2 + self.return_t.width * 0.7 / 2
-                and window.height / 5 - self.return_t.height * 0.7 / 2 <= window._mouse_y
-                <= window.height / 5 + self.return_t.height
-                * 0.7 / 2):
-            arcade.draw_scaled_texture_rectangle(window.width / 2 + self.camera.position.x, window.height / 5,
-                                                 self.return_tg_f, 0.7)
-
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
-        if (window.width / 33 <= x <= window.width / 33 + self.exitStatic.width * 0.08 and
-                window.height / 9 <= y <= window.height / 9 + self.exitStatic.height * 0.08):
-            window.show_view(start_view)
-        if (window.width / 2 <= x <= window.width / 2 + self.return_tg_f.width * 0.7 and
-                window.height / 5 <= y <= window.height / 5 + self.return_tg_f.height * 0.7):
-            window.show_view(gameView)
 
 
 class ChipsView(arcade.View):
@@ -901,7 +835,7 @@ class LidersView(arcade.View):
             self.window.show_view(start_view)
 
 
-window = arcade.Window(1980, 1080,fullscreen=True)
+window = arcade.Window(1980, 1080, fullscreen=True)
 
 # window = arcade.Window(fullscreen=True)
 start_view = StartView()
