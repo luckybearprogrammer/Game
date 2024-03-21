@@ -9,7 +9,7 @@ import asyncio
 
 LANGUAGE = "rus"
 # arcade.load_animated_gif()
-music = arcade.play_sound(arcade.load_sound("env/music/bgmusic.mp3"), looping=True, volume=0.4)
+music = arcade.play_sound(arcade.load_sound("env/music/Celtic.mp3"), looping=True, volume=0.4)
 with open("env/data/user.txt", "r", encoding="utf-8") as file:
     for line in file:
         nick = line.strip()
