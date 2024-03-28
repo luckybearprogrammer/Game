@@ -14,7 +14,8 @@ with open("env/data/user.txt", "r", encoding="utf-8") as file:
     for line in file:
         nick = line.strip()
 mesto = getMesto(nick)
-a=[]
+a = []
+
 
 def resultata():
     global a
@@ -501,6 +502,8 @@ class GameView(arcade.View):
         self.player = Player(3)
         self.startTime = time.time()
         arcade.load_font("env/fonts/yukari.ttf")
+        self.generalStatic = arcade.load_texture("env/buttons/genStatic.png")
+        self.generalDinamic = arcade.load_texture("env/buttons/genDinamic.png")
         self.camera = arcade.Camera(window.width, window.height)
         self.enemy_list = arcade.SpriteList()
         self.tile_map = arcade.load_tilemap("env/For_my_game.tmx", window.height / (64 * 16))
@@ -520,6 +523,7 @@ class GameView(arcade.View):
         for i in self.tile_map.sprite_lists['Enemy']:
             self.enemy_list.append(i)
         self.lol = True
+        self.angle = 0
 
         self.setup()
 
@@ -553,6 +557,26 @@ class GameView(arcade.View):
                                       30 / 1080 * window.height, 120,
                                       20 / 1080 * window.height, arcade.color.WHITE, 2)
 
+        arcade.draw_lrwh_rectangle_textured(self.camera.position.x + window.width / 1.1, window.height / 1.2,
+                                            self.camera.position.y + self.generalStatic.width * (
+                                                        0.09 / 1980 * window.width),
+                                            self.generalStatic.height * (0.09 / 1980 * window.width),
+                                            self.generalStatic, self.angle)
+
+        if (self.camera.position.x+window.width / 1.1 <= window._mouse_x <=
+                self.camera.position.x+window.width / 1.1 + self.generalStatic.width * (0.09 / 1980 * window.width) and
+                window.height / 1.2 <= window._mouse_y <=
+                window.height / 1.2 + self.generalStatic.height * (0.09 / 1980 * window.width)):
+            arcade.draw_lrwh_rectangle_textured(self.camera.position.x + window.width / 1.1, window.height / 1.2,
+                                                self.camera.position.y + self.generalStatic.width * (
+                                                        0.09 / 1980 * window.width),
+                                                self.generalStatic.height * (0.09 / 1980 * window.width),
+                                                self.generalDinamic, self.angle)
+
+
+
+        self.angle += self.player.change_x / 3
+
         elapsed_time = time.time() - self.startTime
 
         # Переводим разницу времени в минуты, секунды и миллисекунды
@@ -572,9 +596,10 @@ class GameView(arcade.View):
             self.camera.move_to((0, 0))
             self.camera.use()
             with open("env/data/records.txt", "a+", encoding="utf-8") as file:
-                file.write(f"{int((minutes * 60 + seconds + milliseconds // 1000) * (10000-self.life) / 10000)}\n")
-            if int((minutes * 60 + seconds + milliseconds // 1000) * (10000-self.life) / 10000)<min(a):
-                send_number_to_api(int((minutes * 60 + seconds + milliseconds // 1000) * (10000-self.life) / 10000),nick)
+                file.write(f"{int((minutes * 60 + seconds + milliseconds // 1000) * (10000 - self.life) / 10000)}\n")
+            if int((minutes * 60 + seconds + milliseconds // 1000) * (10000 - self.life) / 10000) < min(a):
+                send_number_to_api(int((minutes * 60 + seconds + milliseconds // 1000) * (10000 - self.life) / 10000),
+                                   nick)
             self.window.show_view(Victory(f"{minutes}m {seconds}s {milliseconds}mc"))
             print("я сменил")
 
@@ -610,6 +635,7 @@ class GameView(arcade.View):
                                                              gravity_constant=1.8 / 1980 * window.width)
 
     def center_camera_to_player(self):
+
         screen_center_x_1 = self.player.center_x - self.camera.viewport_width / 2
         if screen_center_x_1 < 0:
             screen_center_x_1 = 0
@@ -657,7 +683,7 @@ class GameView(arcade.View):
             seconds = int(elapsed_time % 60)
             milliseconds = int((elapsed_time % 1) * 1000)
             with open("env/data/records.txt", "a+", encoding="utf-8") as file:
-                file.write(f"{int((minutes * 60 + seconds + milliseconds // 1000) * (10000-self.life) / 10000)}\n")
+                file.write(f"{int((minutes * 60 + seconds + milliseconds // 1000) * (10000 - self.life) / 10000)}\n")
             if int((minutes * 60 + seconds + milliseconds // 1000) * (10000 - self.life) / 10000) < min(a):
                 send_number_to_api(int((minutes * 60 + seconds + milliseconds // 1000) * (10000 - self.life) / 10000),
                                    nick)
